@@ -66,7 +66,7 @@ func main() {
 
 	lastId = seq.NextID()
 	fmt.Printf("firstId: %d (%b)\n", lastId, lastId)
-	workerId, sequence := idgen.DecomposeSeq(lastId)
+	workerId, sequence = idgen.DecomposeSeq(lastId)
 	fmt.Printf("workerId: %d, sequence: %d\n", workerId, sequence)
 	for i:=0; i<10; i++ {
 		newId := seq.NextID()
