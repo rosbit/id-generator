@@ -30,9 +30,9 @@ provided by id-generator:
 
         ```
         YYMMDDxxxxxxxWW
-           YYMMDD stands for Year, Month, Day.   (upper limit: 991231)
-           xxxxxx stands for order Id sequence.  (upper limit: 10,000,000)
-           WW     stands for worker id.          (upper limit: 100)
+           YYMMDD  stands for Year, Month, Day.   (upper limit: 991231)
+           xxxxxxx stands for order Id sequence.  (upper limit: 10,000,000 per day)
+           WW      stands for worker id.          (upper limit: 100)
         ```
 
 ## Installation
