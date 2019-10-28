@@ -1,6 +1,6 @@
 # Distributed unique ID Generator
 
-id-generator is a dirstributed unique ID generator. There are 3 kinds of generator
+id-generator is a dirstributed unique ID generator. There are 3 kinds of generators
 provided by id-generator:
 
  1. snowflake-like ID generator
@@ -24,12 +24,12 @@ provided by id-generator:
 
  1. order ID generator
     - id is of type uint64
-    - as a digit string, its first 6 char is date with format "YYMMDD"
-    - the tail chars is workerId
-    - order ID digit is composed of
+    - as a digit string, its head 6 chars are date with layout "YYMMDD"
+    - its tail chars form the workerId specified when initing
+    - the digit of the whole order id is composed of 3 parts
 
         ```
-        YYMMDDxxxxxxxWW
+        parts format: YYMMDDxxxxxxxWW
            YYMMDD  stands for Year, Month, Day.   (upper limit: 991231)
            xxxxxxx stands for order Id sequence.  (upper limit: 10,000,000 per day)
            WW      stands for worker id.          (upper limit: 100)
