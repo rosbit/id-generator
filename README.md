@@ -1,6 +1,6 @@
-# Distributed unique ID Generator (auto-increment ID or Snowflake-like ID)
+# Distributed unique ID Generator
 
-id-generator is a dirstributed unique ID generator. There are 2 kinds of generator
+id-generator is a dirstributed unique ID generator. There are 3 kinds of generator
 provided by id-generator:
 
  1. snowflake-like ID generator
@@ -20,6 +20,19 @@ provided by id-generator:
         ```
         53 bits for a sequence number  (limit: 2**53-1 = 9,007,199,254,740,991)
         10 bits for a worker id        (limit: 2**10 = 1024)
+        ```
+
+ 1. order ID generator
+    - id is of type uint64
+    - as a digit string, its first 6 char is date with format "YYMMDD"
+    - the tail chars is workerId
+    - order ID digit is composed of
+
+        ```
+        YYMMDDxxxxxxxWW
+           YYMMDD stands for Year, Month, Day.   (upper limit: 991231)
+           xxxxxx stands for order Id sequence.  (upper limit: 10,000,000)
+           WW     stands for worker id.          (upper limit: 100)
         ```
 
 ## Installation
@@ -77,6 +90,23 @@ func main() {
 		lastId = newId
 	}
 	seq.Exit()
+
+	// for order Id
+	ord := idgen.NewOrderIdGenerator(workerId, "Asia/Shanghai")
+	lastId = ord.NextID()
+
+	fmt.Printf("firstId: %d\n", lastId)
+	day, workerId, sequence := idgen.DecomposeOrd(lastId)
+	fmt.Printf("day: %d, workerId: %d, sequence: %d\n", day, workerId, sequence)
+	for i:=0; i<10; i++ {
+		newId := ord.NextID()
+		fmt.Printf("#%d : %d\n", i, newId)
+		if newId < lastId {
+			log.Fatal("newId is less than lastId")
+		}
+		lastId = newId
+	}
+	ord.Exit()
 }
 ```
 
@@ -90,6 +120,7 @@ The benchmark result is:
 goos: linux
 goarch: amd64
 pkg: github.com/rosbit/id-generator
+Benchmark_orderNextId     	 3000000	       479 ns/op
 Benchmark_seqNextId       	 3000000	       469 ns/op
 Benchmark_snowFlakeNextId 	 3000000	       472 ns/op
 PASS
