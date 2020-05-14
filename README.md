@@ -49,64 +49,35 @@ package main
 import (
 	"github.com/rosbit/id-generator"
 	"time"
-	"log"
 )
 
 func main() {
-	// for snowflake-like ID
+	// 1. for snowflake-like ID
 	epochTime := time.Now().AddDate(0, 0, -1) // set your epochTime, a history time
-	workerId := 1 // set your own workerId
-	sf := idgen.NewFlakeIdGenerator(epochTime, workerId)
-
-	lastId := sf.NextID()
-	log.Printf("firstId: %d (%b)\n", lastId, lastId)
-	elaspedTime, workerId, sequence := idgen.DecomposeSF(lastId)
-	fmt.Printf("elaspedTime: %d, workerId: %d, sequence: %d\n", elaspedTime, workerId, sequence)
-
+	workerId := uint16(1) // set your own workerId
+	sf := idgen.NewFlakeIdGenerator(echochTime, workerId)   // 64bit id
+	// sf := idgen.NewFlakeIdGenerator32(echochTime, workerId) // 32bit id, most of time, 32bit is ok.
 	for i:=0; i<10; i++ {
-		newId := sf.NextID()
-		log.Printf("#%d : %d (%b)\n", i, newId, newId)
-		if newId < lastId {
-			log.Fatal("newId is less than lastId")
-		}
-		lastId = newId
+		id := sf.NextID()
+		// id
 	}
-	sf.Exit()
+	fs.Exit()
 
-	// for sequcen ID
-	startId := 0 // set your own startId
-	seq := idgen.NewSeqIdGenerator(workerId, startId)
-
-	lastId = seq.NextID()
-	fmt.Printf("firstId: %d (%b)\n", lastId, lastId)
-	workerId, sequence = idgen.DecomposeSeq(lastId)
-	fmt.Printf("workerId: %d, sequence: %d\n", workerId, sequence)
+	// 2. for order id
+	ord := idgen.NewOrderIdGenerator(workerId, "Asia/Shanghai") // any valid tz string is ok
 	for i:=0; i<10; i++ {
-		newId := seq.NextID()
-		fmt.Printf("#%d : %d (%b)\n", i, newId, newId)
-		if newId < lastId {
-			log.Fatal("newId is less than lastId")
-		}
-		lastId = newId
-	}
-	seq.Exit()
-
-	// for order Id
-	ord := idgen.NewOrderIdGenerator(workerId, "Asia/Shanghai")
-	lastId = ord.NextID()
-
-	fmt.Printf("firstId: %d\n", lastId)
-	day, workerId, sequence := idgen.DecomposeOrd(lastId)
-	fmt.Printf("day: %d, workerId: %d, sequence: %d\n", day, workerId, sequence)
-	for i:=0; i<10; i++ {
-		newId := ord.NextID()
-		fmt.Printf("#%d : %d\n", i, newId)
-		if newId < lastId {
-			log.Fatal("newId is less than lastId")
-		}
-		lastId = newId
+		id := ord.NextID()
+		// id
 	}
 	ord.Exit()
+
+	// 3. for sequence id
+	seq := idgen.NewSeqIdGenerator(workerId, 0) // startId, any uint64 is ok
+	for i:=0; i<10; i++ {
+		id := seq.NextID()
+		// id
+	}
+	seq.Exit()
 }
 ```
 
