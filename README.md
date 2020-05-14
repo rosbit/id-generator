@@ -61,7 +61,7 @@ func main() {
 		id := sf.NextID()
 		// id
 	}
-	fs.Exit()
+	sf.Exit()
 
 	// 2. for order id
 	ord := idgen.NewOrderIdGenerator(workerId, "Asia/Shanghai") // any valid tz string is ok
