@@ -36,8 +36,7 @@ func NewSeqIdGenerator(workerId uint16, startId uint64) *SeqIdGenerator {
 }
 
 func (ig *SeqIdGenerator) generator() {
-	for !ig.exit {
-		<-ig.idReq
+	for range ig.idReq {
 		ig.idRes <- ig.nextId
 		ig.nextId++
 	}
@@ -49,7 +48,11 @@ func (ig *SeqIdGenerator) NextID() uint64 {
 }
 
 func (ig *SeqIdGenerator) Exit() {
+	if ig.exit {
+		return
+	}
 	ig.exit = true
+	close(ig.idReq)
 }
 
 func DecomposeSeq(id uint64) (workerId uint16, sequence uint64) {

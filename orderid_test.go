@@ -25,7 +25,7 @@ func Test_orderNextId(t *testing.T) {
 		lastId = newId
 	}
 	ig.Exit()
-	fmt.Printf("------------done for orderqid --------------\n")
+	fmt.Printf("------------done for orderid --------------\n")
 }
 
 func Benchmark_orderNextId(b *testing.B) {

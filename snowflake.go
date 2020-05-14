@@ -172,9 +172,7 @@ func (ig *FlakeIdGenerator) generator() {
 	seqBits, maxSeq := uint64(params.bitsSequence), params.maxSeq
 	var nextId *uint64
 
-	for !ig.exit {
-		<-ig.idReq      // blocking until NextID() called
-
+	for range ig.idReq {
 		nextId = &ig.nextIDs[ig.rIdx]
 		ig.idRes <- *nextId // maybe dirty reading, but it doesn't matter
 		*nextId++           // maybe dirty writing, but it also deosn't matter
@@ -196,11 +194,12 @@ func (ig *FlakeIdGenerator) NextID32() uint32 {
 }
 
 func (ig *FlakeIdGenerator) Exit() {
-	ig.exit = true
-	if ig.ticker != nil {
-		ig.ticker.Stop()
-		ig.ticker = nil
+	if ig.exit {
+		return
 	}
+	ig.exit = true
+	ig.ticker.Stop()
+	close(ig.idReq)
 }
 
 func DecomposeSF(id uint64) (elaspedTime uint32, workerId uint16, sequence uint32) {

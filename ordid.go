@@ -134,9 +134,7 @@ func (og *OrderIdGenerator) calcFirstIdInDay(today *time.Time) nextIdT {
 func (og *OrderIdGenerator) generator() {
 	var nextId *nextIdT
 
-	for !og.exit {
-		<-og.idReq      // blocking until NextID() called
-
+	for range og.idReq {
 		nextId = &og.nextIDs[og.rIdx]
 		og.idRes <- nextId.id() // maybe dirty reading, but it doesn't matter
 		nextId.seq += 1         // maybe dirty writing, but it also deosn't matter
@@ -153,11 +151,12 @@ func (og *OrderIdGenerator) NextID() uint64 {
 }
 
 func (og *OrderIdGenerator) Exit() {
-	og.exit = true
-	if og.ticker != nil {
-		og.ticker.Stop()
-		og.ticker = nil
+	if og.exit {
+		return
 	}
+	og.exit = true
+	og.ticker.Stop()
+	close(og.idReq)
 }
 
 func DecomposeOrd(id uint64) (day uint32, workerId uint16, sequence uint32) {
