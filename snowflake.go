@@ -142,10 +142,10 @@ func (ig *FlakeIdGenerator) timeTicker() {
 	lastTime, firstId := elapsedTime, (uint64(elapsedTime) << params.elapsedTimeShiftBits) | workerIdBitsMask | uint64(remain)
 	ig.nextIDs[0], ig.nextIDs[1], ig.rIdx = firstId, firstId, 0 // nextIDs, rIdx inited before calling generator()
 
+	ig.ticker = time.NewTicker(1 * time.Second)
 	// modify firstId every sencond
 	go func() {
 		var wIdx int
-		ig.ticker = time.NewTicker(1 * time.Second)
 		for t := range ig.ticker.C {
 			elapsedTime, _ = params.elapse(t, ig.epochTime)
 			if elapsedTime <= lastTime {

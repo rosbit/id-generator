@@ -27,12 +27,22 @@ provided by id-generator:
     - as a digit string, its head 6 chars are date with layout "YYMMDD"
     - its tail chars form the workerId specified when initing
     - the digit of the whole order id is composed of 3 parts
+        - short order id
 
         ```
         parts format: YYMMDDxxxxxxxWW
            YYMMDD  stands for Year, Month, Day.   (upper limit: 991231)
            xxxxxxx stands for order Id sequence.  (upper limit: 10,000,000 per day)
            WW      stands for worker id.          (upper limit: 100)
+        ```
+
+        - long order id
+
+        ```
+        parts format: YYMMDDhhmmxxxxxxWW
+           YYMMDDhhmm  stands for Year, Month, Day, Hour, Minute. (upper limit: 9912312359)
+           xxxxxx      stands for order Id sequence.              (upper limit: 1,000,000 per minute)
+           WW          stands for worker id.                      (upper limit: 100)
         ```
 
 ## Installation
@@ -70,6 +80,13 @@ func main() {
 		// id
 	}
 	ord.Exit()
+
+	ord2 := idgen.NewLongOrderIdGenerator(workerId, "Asia/Shanghai") // any valid tz string is ok
+	for i:=0; i<10; i++ {
+		id := ord2.NextID()
+		// id
+	}
+	ord2.Exit()
 
 	// 3. for sequence id
 	seq := idgen.NewSeqIdGenerator(workerId, 0) // startId, any uint64 is ok
